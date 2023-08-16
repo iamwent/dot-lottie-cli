@@ -58,7 +58,7 @@ class KottieConverter(
     }
 
     private suspend fun download(url: String, dest: Path) {
-        val sink = fileSystem.sink(dest).buffer()
+        val sink = fileSystem.sink(dest, false).buffer()
 
         client.prepareGet(url).execute { httpResponse ->
             val channel = httpResponse.bodyAsChannel()

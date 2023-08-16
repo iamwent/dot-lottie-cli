@@ -46,3 +46,5 @@ gradle-app.setting
 .classpath
 
 .idea
+
+**/.DS_Store

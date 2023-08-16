@@ -3,9 +3,6 @@ import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.multiple
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
-import io.ktor.client.*
-import io.ktor.client.engine.darwin.*
-import io.ktor.client.plugins.logging.*
 import kotlinx.coroutines.runBlocking
 import okio.FileSystem
 import okio.Path
@@ -17,11 +14,7 @@ class KottieCommand : CliktCommand(
     val files: List<String> by argument().multiple()
     val recursive by option("-r", "--recursive", help = "convert directories recursively").flag()
 
-    private val client by lazy {
-        HttpClient(Darwin) {
-            install(Logging)
-        }
-    }
+    private val client by lazy { getHttpClient() }
 
     override fun run() {
         echo("Find lottie files...")
@@ -47,7 +40,7 @@ class KottieCommand : CliktCommand(
             .filter { FileSystem.SYSTEM.exists(it) }
             .flatMap {
                 return@flatMap if (recursive) {
-                    FileSystem.SYSTEM.listRecursively(it).toList()
+                    FileSystem.SYSTEM.listRecursively(it, false).toList()
                 } else {
                     FileSystem.SYSTEM.list(it)
                 }
