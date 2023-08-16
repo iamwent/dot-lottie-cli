@@ -17,12 +17,16 @@ class KottieCommand : CliktCommand(
     private val client by lazy { getHttpClient() }
 
     override fun run() {
-        echo("Find lottie files...")
+        echo("Find lottie files...\n")
         val lottieFiles = findLottieFiles()
         if (lottieFiles.isEmpty()) {
-            echo("No lottie file found!")
+            echo(Printer.red("✘ No lottie file found."))
             return
         }
+
+        val message = if (lottieFiles.size == 1) "✔ Found 1 JSON file" else "✔ Found ${lottieFiles.size} JSON files"
+        echo(Printer.green(message))
+        echo(Printer.bold("\nProcessing...\n"))
 
         val converter = KottieConverter(FileSystem.SYSTEM, client)
         runBlocking {
@@ -30,8 +34,18 @@ class KottieCommand : CliktCommand(
                 val fileName = "${source.name.dropLast(".json".length)}.lottie"
                 val dest = source.parent?.resolve(fileName) ?: fileName.toPath()
                 converter.convert(source, dest)
+                printConversionResult(source, dest)
             }
         }
+    }
+
+    private fun printConversionResult(source: Path, dest: Path) {
+        val sourceSize = FileSystem.SYSTEM.metadata(source).size ?: return
+        val destSize = FileSystem.SYSTEM.metadata(dest).size ?: return
+        val savedSize = (sourceSize - destSize).div(1024)
+        val savedPercent = (sourceSize - destSize).toDouble().div(sourceSize).times(100).toInt()
+        val message = "${dest.name} done! saved ${savedSize}kb(${savedPercent}%)"
+        echo(Printer.green(message))
     }
 
     private fun findLottieFiles(): List<Path> {
