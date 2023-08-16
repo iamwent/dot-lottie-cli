@@ -9,7 +9,7 @@ import okio.FileSystem
 import okio.Path
 import okio.buffer
 
-class DotLottieConverter(
+class KottieConverter(
     private val fileSystem: FileSystem,
     private val client: HttpClient
 ) {

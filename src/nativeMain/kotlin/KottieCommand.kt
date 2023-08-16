@@ -11,8 +11,8 @@ import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
 
-class DotLottieCommand : CliktCommand(
-    help = "Convert Lottie JSON to dotLottie, https://dotlottie.io/"
+class KottieCommand : CliktCommand(
+    help = "Convert Lottie JSON to dotLottie format"
 ) {
     val files: List<String> by argument().multiple()
     val recursive by option("-r", "--recursive", help = "convert directories recursively").flag()
@@ -31,7 +31,7 @@ class DotLottieCommand : CliktCommand(
             return
         }
 
-        val converter = DotLottieConverter(FileSystem.SYSTEM, client)
+        val converter = KottieConverter(FileSystem.SYSTEM, client)
         runBlocking {
             lottieFiles.forEach { source ->
                 val fileName = "${source.name.dropLast(".json".length)}.lottie"

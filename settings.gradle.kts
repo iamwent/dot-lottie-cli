@@ -1,3 +1,3 @@
 
-rootProject.name = "dot-lottie-cli"
+rootProject.name = "kottie"
 

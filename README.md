@@ -1,4 +1,4 @@
-# dot-lottie-cli
+# kottie
 A cli tool based on Koltin/Native to convert your Lottie JSON to dotLottie format.
 
 

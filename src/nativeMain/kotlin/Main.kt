@@ -1,1 +1,1 @@
-fun main(args: Array<String>) = DotLottieCommand().main(args)
+fun main(args: Array<String>) = KottieCommand().main(args)
