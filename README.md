@@ -1,6 +1,17 @@
 # kottie
 A cli tool based on Koltin/Native to convert your Lottie JSON to dotLottie format.
 
+```shell
+./kottie -h
+Usage: kottie [<options>] [<files>]...
+
+  Convert Lottie JSON to dotLottie format
+
+Options:
+  -r, --recursive  convert directories recursively
+  -h, --help       Show this message and exit
+```
+
 
 ### Thanks to
 - [Koltin/Native](https://kotlinlang.org/docs/native-overview.html)
