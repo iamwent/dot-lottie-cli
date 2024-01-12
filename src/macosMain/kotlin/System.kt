@@ -33,7 +33,6 @@ class MacosSystem : System {
             add(command)
             addAll(args)
         }.joinToString(separator = " ") { it.replace(" ", "\\ ") }
-        println("Execute '$cmd'")
 
         val buffer = ByteArray(128)
         val exitCode: Int
@@ -45,7 +44,6 @@ class MacosSystem : System {
             while (true) {
                 val input = fgets(buffer.refTo(0), buffer.size, pipe) ?: break
                 val inputString = input.toKString()
-                println(inputString.removeSuffix("\n"))
                 result += inputString
             }
         } finally {

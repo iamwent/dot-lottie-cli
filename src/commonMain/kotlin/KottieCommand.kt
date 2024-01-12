@@ -3,6 +3,8 @@ import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.multiple
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import okio.FileSystem
 import okio.Path
@@ -38,13 +40,18 @@ class KottieCommand : CliktCommand(
 
         val converter = KottieConverter(fileSystem, client, cookie)
         runBlocking {
-            lottieFiles.forEach { source ->
-                val fileName = "${source.name.dropLast(".json".length)}.lottie"
-                val dest = source.parent?.resolve(fileName) ?: fileName.toPath()
-                converter.convert(source, dest).getOrNull()?.let { optimize ->
-                    printConversionResult(optimize)
+            lottieFiles.map { source ->
+                async {
+                    val fileName = "${source.name.dropLast(".json".length)}.lottie"
+                    val dest = source.parent?.resolve(fileName) ?: fileName.toPath()
+                    val result = converter.convert(source, dest)
+                    if (result.isSuccess) {
+                        result.getOrNull()?.let { printConversionResult(it) }
+                    } else {
+                        result.exceptionOrNull()?.message?.let { println(it) }
+                    }
                 }
-            }
+            }.awaitAll()
         }
     }
 

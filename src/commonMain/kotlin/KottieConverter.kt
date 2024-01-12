@@ -52,16 +52,17 @@ class KottieConverter(
     }
 
     private suspend fun queryStatus(id: String): Result<StatusResponse?> {
-        var retry = 0
-        while (retry < MAX_RETRY) {
-            delay((retry + 1) * 1000L)
+        var retry = 1
+
+        while (retry <= MAX_RETRY) {
+            delay(retry * 200L)
             val result = query(id).getOrNull()
-            if (result?.downloadUrl.isNullOrEmpty()) {
-                retry++
-                continue
+            if (!result?.downloadUrl.isNullOrEmpty()) {
+                return Result.success(result)
             }
-            return Result.success(result)
+            retry += 1
         }
+
         return Result.failure(IllegalArgumentException("convert failed"))
     }
 
