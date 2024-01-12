@@ -21,6 +21,12 @@ kotlin {
     }
 
     sourceSets {
+        all {
+            languageSettings {
+                optIn("kotlinx.cinterop.ExperimentalForeignApi")
+            }
+        }
+
         val commonMain by getting {
             dependencies {
                 implementation("com.github.ajalt.clikt:clikt:4.0.0")

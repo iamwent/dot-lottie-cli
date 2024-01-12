@@ -2,43 +2,57 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UploadRequest(
-    @SerialName("payload")
-    val payload: String
-)
-
-@Serializable
-data class UploadResponse(
-    @SerialName("payload")
-    val payload: Payload
+data class OptimizeResponse(
+    @SerialName("status")
+    val status: String?,
+    @SerialName("id")
+    val id: String?,
+    @SerialName("url")
+    val url: String?,
 ) {
-    @Serializable
-    data class Payload(
-        @SerialName("id")
-        val id: Int,
-        @SerialName("hash")
-        val hash: String,
-        @SerialName("filetype")
-        val filetype: String,
-        @SerialName("data_file")
-        val dataFile: String,
-    )
+    val success: Boolean
+        get() = status == "success"
+
+    val optimizeId: String?
+        get() = id?.takeIf { success }
 }
 
 ///////////////////////////////////////////////////////////
 
 @Serializable
-data class ConvertRequest(
-    @SerialName("url")
-    val url: String
-)
+data class StatusResponse(
+    @SerialName("status")
+    val status: String?,
+    @SerialName("input")
+    val input: Content?,
+    @SerialName("optimized")
+    val optimized: Content?,
+) {
+    val success: Boolean
+        get() = status == "ready"
 
-@Serializable
-data class ConvertResponse(
-    @SerialName("converted_file_size")
-    val convertedFileSize: String,
-    @SerialName("file")
-    val `file`: String,
-    @SerialName("source_file_size")
-    val sourceFileSize: String
-)
+    val downloadUrl: String?
+        get() = optimized?.url?.takeIf { success }
+
+    @Serializable
+    data class Content(
+        @SerialName("contentLength")
+        val contentLength: Long,
+
+        @SerialName("url")
+        val url: String?,
+    )
+}
+
+data class Optimize(
+    val source: String,
+    val dest: String,
+    val sourceSize: Long,
+    val destSize: Long,
+) {
+    val savedSize: Long
+        get() = sourceSize - destSize
+    val savedPercent: Int
+        get() = savedSize.toDouble().div(sourceSize).times(100).toInt()
+
+}

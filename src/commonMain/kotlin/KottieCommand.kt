@@ -17,6 +17,14 @@ class KottieCommand : CliktCommand(
     private val client by lazy { getHttpClient() }
 
     override fun run() {
+        val fileSystem = FileSystem.SYSTEM
+        val cookie = readCookie()
+        if (cookie.isNullOrEmpty()) {
+            echo(Printer.red("✘ Cookie not found."))
+            echo(Printer.red("✘ Please config your cookie first: https://github.com/iamwent/kottie"))
+            return
+        }
+
         echo("Find lottie files...\n")
         val lottieFiles = findLottieFiles()
         if (lottieFiles.isEmpty()) {
@@ -28,23 +36,21 @@ class KottieCommand : CliktCommand(
         echo(Printer.green(message))
         echo(Printer.bold("\nProcessing...\n"))
 
-        val converter = KottieConverter(FileSystem.SYSTEM, client)
+        val converter = KottieConverter(fileSystem, client, cookie)
         runBlocking {
             lottieFiles.forEach { source ->
                 val fileName = "${source.name.dropLast(".json".length)}.lottie"
                 val dest = source.parent?.resolve(fileName) ?: fileName.toPath()
-                converter.convert(source, dest)
-                printConversionResult(source, dest)
+                converter.convert(source, dest).getOrNull()?.let { optimize ->
+                    printConversionResult(optimize)
+                }
             }
         }
     }
 
-    private fun printConversionResult(source: Path, dest: Path) {
-        val sourceSize = FileSystem.SYSTEM.metadata(source).size ?: return
-        val destSize = FileSystem.SYSTEM.metadata(dest).size ?: return
-        val savedSize = (sourceSize - destSize).div(1024)
-        val savedPercent = (sourceSize - destSize).toDouble().div(sourceSize).times(100).toInt()
-        val message = "${dest.name} done! saved ${savedSize}kb(${savedPercent}%)"
+    private fun printConversionResult(optimize: Optimize) {
+        val savedSize = (optimize.savedSize / 1024.0).toInt()
+        val message = "${optimize.dest} done! saved ${savedSize}kb(${optimize.savedPercent}%)"
         echo(Printer.green(message))
     }
 
@@ -62,5 +68,18 @@ class KottieCommand : CliktCommand(
                 return@filter FileSystem.SYSTEM.metadata(it).isRegularFile
                         && it.name.endsWith(".json", ignoreCase = true)
             }
+    }
+
+    private fun readCookie(): String? {
+        val system = getSystem()
+        val result = system.execute("realpath", COOKIE_PATH)
+        val cookie = result.output
+            ?.takeIf { system.fileExists(it) }
+            ?.let { system.readFile(it) }
+        return cookie
+    }
+
+    companion object {
+        private const val COOKIE_PATH = "~/.kottie/cookie"
     }
 }

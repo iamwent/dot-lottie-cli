@@ -12,6 +12,12 @@ Options:
   -h, --help       Show this message and exit
 ```
 
+## Config cookie
+LottieFiles modified the API for converting and requires authorization. So this a  
+1. Open [Convert Lottie JSON](https://lottiefiles.com/tools/lottie-to-dotlottie) and login with your account
+2. Open the developer console and get the cookie with `document.cookie`, single quotation marks are not needed
+3. Save your cookie to the file `~/.kottie/cookie`
+4. Enjoy
 
 ### Thanks to
 - [Koltin/Native](https://kotlinlang.org/docs/native-overview.html)
