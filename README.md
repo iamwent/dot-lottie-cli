@@ -13,11 +13,12 @@ Options:
 ```
 
 ## Config cookie
-LottieFiles modified the API for converting and requires authorization. So this a  
+LottieFiles modified the API for converting and requires authorization. So you need to config your LottieFiles cookie manually: 
 1. Open [Convert Lottie JSON](https://lottiefiles.com/tools/lottie-to-dotlottie) and login with your account
-2. Open the developer console and get the cookie with `document.cookie`, single quotation marks are not needed
-3. Save your cookie to the file `~/.kottie/cookie`
-4. Enjoy
+2. Open the developer console and go to the application tab
+3. Get the value for name `ory_kratos_session` under site https://lottiefiles.com/
+4. Save your cookie to the file `~/.kottie/cookie` with format `ory_kratos_session={your_session_value}`
+5. Enjoy
 
 ### Thanks to
 - [Koltin/Native](https://kotlinlang.org/docs/native-overview.html)
