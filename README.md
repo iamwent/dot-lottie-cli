@@ -20,6 +20,10 @@ LottieFiles modified the API for converting and requires authorization. So you n
 4. Save your cookie to the file `~/.kottie/cookie` with format `ory_kratos_session={your_session_value}`
 5. Enjoy
 
+## Release
+1. Setup your build environment [Get started with Kotlin/Native in IntelliJ IDEA](https://kotlinlang.org/docs/native-get-started.html)
+2. `./gradlew clean assembleReleaseExecutableMacos`
+
 ### Thanks to
 - [Koltin/Native](https://kotlinlang.org/docs/native-overview.html)
 - [kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines)
